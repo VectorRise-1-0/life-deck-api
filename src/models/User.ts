@@ -1,10 +1,12 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
 export type SubscriptionStatus = "FREE" | "PREMIUM";
 export type Role = "free_user" | "premium_user" | "admin";
 
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   email: string;
+  password: string;
   subscriptionStatus: SubscriptionStatus;
   role: Role;
   createdAt: Date;
@@ -20,6 +22,7 @@ const userSchema = new Schema<IUser>(
       lowercase: true,
       trim: true,
     },
+    password: { type: String, required: true },
     subscriptionStatus: {
       type: String,
       enum: ["FREE", "PREMIUM"],
