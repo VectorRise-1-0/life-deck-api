@@ -17,7 +17,7 @@ export function authenticate(req: AuthRequest, _res: Response, next: NextFunctio
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET) as { userId: string };
+    const payload = jwt.verify(token, env.JWT_ACCESS_SECRET) as { userId: string };
     req.userId = payload.userId;
     next();
   } catch (err) {
