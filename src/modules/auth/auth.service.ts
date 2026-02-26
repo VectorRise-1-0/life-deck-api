@@ -15,7 +15,7 @@ const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY_DAYS = 7;
 
 function generateAccessToken(userId: string): string {
-  return jwt.sign({ userId }, env.JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
+  return jwt.sign({ userId }, env.JWT_ACCESS_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
 }
 
 function generateRefreshToken(): string {
