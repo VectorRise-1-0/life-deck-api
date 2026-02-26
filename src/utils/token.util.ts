@@ -15,8 +15,6 @@ export function signAccessToken(user: IUser): string {
   return jwt.sign(
     {
       sub: user._id.toString(),
-      role: user.role,
-      subscriptionStatus: user.subscriptionStatus,
     },
     secret,
     options,
