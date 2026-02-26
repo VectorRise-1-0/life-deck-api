@@ -6,7 +6,7 @@ import { signAccessToken } from "../utils/token.util";
 const SALT_ROUNDS = 10;
 
 export async function register(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
@@ -18,11 +18,11 @@ export async function register(req: Request, res: Response) {
       return res.status(400).json({ error: "Email already registered" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await User.create({
+      name,
       email,
-      password: hashedPassword,
+      passwordHash,
     });
 
     const accessToken = signAccessToken(user);
@@ -32,9 +32,10 @@ export async function register(req: Request, res: Response) {
       accessToken,
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
-        role: user.role,
-        subscriptionStatus: user.subscriptionStatus,
+        hasCompletedOnboarding: user.hasCompletedOnboarding,
+        joinDate: user.joinDate,
       },
     });
   } catch (err) {
@@ -55,7 +56,7 @@ export async function login(req: Request, res: Response) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
@@ -67,9 +68,10 @@ export async function login(req: Request, res: Response) {
       accessToken,
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
-        role: user.role,
-        subscriptionStatus: user.subscriptionStatus,
+        hasCompletedOnboarding: user.hasCompletedOnboarding,
+        joinDate: user.joinDate,
       },
     });
   } catch (err) {
