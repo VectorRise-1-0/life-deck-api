@@ -1,42 +1,24 @@
-import { Schema, model, Document, Types } from "mongoose";
-
-export type SubscriptionStatus = "FREE" | "PREMIUM";
-export type Role = "free_user" | "premium_user" | "admin";
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
-  _id: Types.ObjectId;
+  name: string;
   email: string;
-  password: string;
-  subscriptionStatus: SubscriptionStatus;
-  role: Role;
-  createdAt: Date;
-  updatedAt: Date;
+  passwordHash: string;
+  hasCompletedOnboarding: boolean;
+  joinDate: Date;
 }
 
-const userSchema = new Schema<IUser>(
+const UserSchema = new Schema<IUser>(
   {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: { type: String, required: true },
-    subscriptionStatus: {
-      type: String,
-      enum: ["FREE", "PREMIUM"],
-      default: "FREE",
-    },
-    role: {
-      type: String,
-      enum: ["free_user", "premium_user", "admin"],
-      default: "free_user",
-    },
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    passwordHash: { type: String, required: true },
+    hasCompletedOnboarding: { type: Boolean, default: false },
+    joinDate: { type: Date, default: Date.now },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true }
 );
 
-export const User = model<IUser>("User", userSchema);
+UserSchema.index({ email: 1 });
+
+export const User = mongoose.model<IUser>('User', UserSchema);
